@@ -14,11 +14,28 @@ class QRViewWidget extends StatefulWidget {
   State<StatefulWidget> createState() => _QRViewWidgetState();
 }
 
-class _QRViewWidgetState extends State<QRViewWidget> {
+class _QRViewWidgetState extends State<QRViewWidget> with WidgetsBindingObserver {
   Barcode result;
   QRViewController controller;
   final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
 
+  @override
+  void initState() {
+    WidgetsBinding.instance.addObserver(this);
+    super.initState();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    print('state = $state');
+    if (state == AppLifecycleState.paused) {
+      controller.pauseCamera();
+    }
+    if(state == AppLifecycleState.resumed) {
+      controller.resumeCamera();
+    }
+
+  }
   // In order to get hot reload to work we need to pause the camera if the platform
   // is android, or resume the camera if the platform is iOS.
   @override
@@ -129,6 +146,7 @@ class _QRViewWidgetState extends State<QRViewWidget> {
   @override
   void dispose() {
     controller?.dispose();
+    WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
 }
