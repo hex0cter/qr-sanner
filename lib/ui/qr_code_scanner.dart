@@ -23,13 +23,19 @@ class _QRViewWidgetState extends State<QRViewWidget> {
   void reassemble() {
     super.reassemble();
     if (Platform.isAndroid) {
-      controller.pauseCamera();
+      controller?.pauseCamera();
     }
-    controller.resumeCamera();
+    controller?.resumeCamera();
   }
 
   @override
   Widget build(BuildContext context) {
+    Future<bool> _future = controller?.getFlashStatus();
+    _future?.catchError((err) {
+      // do something with err
+      print(err);
+    });
+
     return Scaffold(
       body: Column(
         children: <Widget>[
@@ -43,7 +49,7 @@ class _QRViewWidgetState extends State<QRViewWidget> {
                 children: <Widget>[
                   if (result != null)
                     Text(
-                        'Barcode Type: ${describeEnum(result.format)}   Data: ${result.code}')
+                        '${result.code}')
                   else
                     Text('Scan a code'),
                   Row(
@@ -58,28 +64,9 @@ class _QRViewWidgetState extends State<QRViewWidget> {
                               setState(() {});
                             },
                             child: FutureBuilder(
-                              future: controller?.getFlashStatus(),
+                              future: _future,
                               builder: (context, snapshot) {
-                                return Text('Flash: ${snapshot.data ? "On" : "Off"}');
-                              },
-                            )),
-                      ),
-                      Container(
-                        margin: EdgeInsets.all(8),
-                        child: ElevatedButton(
-                            onPressed: () async {
-                              await controller?.flipCamera();
-                              setState(() {});
-                            },
-                            child: FutureBuilder(
-                              future: controller?.getCameraInfo(),
-                              builder: (context, snapshot) {
-                                if (snapshot.data != null) {
-                                  return Text(
-                                      'Camera: ${describeEnum(snapshot.data)}');
-                                } else {
-                                  return Text('loading');
-                                }
+                                return Text('Flash: ${snapshot.data != null ? "On" : "Off"}');
                               },
                             )),
                       ),
@@ -99,30 +86,6 @@ class _QRViewWidgetState extends State<QRViewWidget> {
                       )
                     ],
                   ),
-                  // Row(
-                  //   mainAxisAlignment: MainAxisAlignment.center,
-                  //   crossAxisAlignment: CrossAxisAlignment.center,
-                  //   children: <Widget>[
-                  //     Container(
-                  //       margin: EdgeInsets.all(8),
-                  //       child: ElevatedButton(
-                  //         onPressed: () async {
-                  //           await controller?.pauseCamera();
-                  //         },
-                  //         child: Text('pause', style: TextStyle(fontSize: 20)),
-                  //       ),
-                  //     ),
-                  //     Container(
-                  //       margin: EdgeInsets.all(8),
-                  //       child: ElevatedButton(
-                  //         onPressed: () async {
-                  //           await controller?.resumeCamera();
-                  //         },
-                  //         child: Text('resume', style: TextStyle(fontSize: 20)),
-                  //       ),
-                  //     )
-                  //   ],
-                  // ),
                 ],
               ),
             ),
