@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'dart:io';
 import 'package:flutter/foundation.dart';
+import 'package:clipboard/clipboard.dart';
 
 class QRViewWidget extends StatefulWidget {
+
   const QRViewWidget({
     Key key,
   }) : super(key: key);
@@ -51,14 +53,14 @@ class _QRViewWidgetState extends State<QRViewWidget> {
                     Text(
                         '${result.code}')
                   else
-                    Text('Scan a code'),
+                    Text('Scan a code.'),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: <Widget>[
                       Container(
                         margin: EdgeInsets.all(8),
-                        child: ElevatedButton(
+                        child: TextButton(
                             onPressed: () async {
                               await controller?.toggleFlash();
                               setState(() {});
@@ -66,23 +68,21 @@ class _QRViewWidgetState extends State<QRViewWidget> {
                             child: FutureBuilder(
                               future: _future,
                               builder: (context, snapshot) {
-                                return Text('Flash: ${snapshot.data != null ? "On" : "Off"}');
+                                return snapshot.data == null ? Text("Unknown") : snapshot.data ? Text("On") : Text("Off");
                               },
                             )),
                       ),
                       Container(
                         margin: EdgeInsets.all(8),
-                        child: ElevatedButton(
+                        child: TextButton(
                             onPressed: () async {
-                              await controller?.flipCamera();
+                              if (result != null) {
+                                FlutterClipboard.copy(result.code);
+                              }
                               setState(() {});
                             },
-                            child: FutureBuilder(
-                              future: controller?.getCameraInfo(),
-                              builder: (context, snapshot) {
-                                return Text('Copy');
-                              },
-                            )),
+                          child: Text("Copy"),
+                        )
                       )
                     ],
                   ),
