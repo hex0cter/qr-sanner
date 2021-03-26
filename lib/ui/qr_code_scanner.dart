@@ -55,58 +55,87 @@ class _QRViewWidgetState extends State<QRViewWidget> with WidgetsBindingObserver
       print(err);
     });
 
+    // double c_width = MediaQuery.of(context).size.width;
+    String text = result?.code == null ? "Please scan a code ..." : result.code;
     return Scaffold(
       body: Column(
         children: <Widget>[
-          Expanded(flex: 4, child: _buildQrView(context)),
-          Expanded(
-            flex: 1,
-            child: FittedBox(
-              fit: BoxFit.contain,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: <Widget>[
-                  if (result != null)
-                    Text(
-                        '${result.code}')
-                  else
-                    Text('Scan a code.'),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: <Widget>[
-                      Container(
-                        margin: EdgeInsets.all(8),
-                        child: TextButton(
-                            onPressed: () async {
-                              await controller?.toggleFlash();
-                              setState(() {});
-                            },
-                            child: FutureBuilder(
-                              future: _future,
-                              builder: (context, snapshot) {
-                                return snapshot.data == null ? Text("Unknown") : snapshot.data ? Text("On") : Text("Off");
-                              },
-                            )),
-                      ),
-                      Container(
-                        margin: EdgeInsets.all(8),
-                        child: TextButton(
-                            onPressed: () async {
-                              if (result != null) {
-                                FlutterClipboard.copy(result.code);
-                              }
-                              setState(() {});
-                            },
-                          child: Text("Copy"),
-                        )
-                      )
-                    ],
-                  ),
-                ],
+          Expanded(flex: 5, child: _buildQrView(context)),
+          Expanded(child: Column(
+            children: [
+              FittedBox(
+                fit: BoxFit.contain,
+                child: Container (
+                  padding: const EdgeInsets.only(left: 16.0, top: 16.0, right: 16.0, bottom: 0.0),
+                  width: MediaQuery.of(context).size.width,
+                  child: Text(text.length > 120 ? '${text.substring(0, 117)}...' : text.padLeft(120),
+                      textAlign: TextAlign.left,
+                    style: TextStyle(fontFamily: "Arial Rounded", fontWeight: FontWeight.normal),
+                  )
+                ),
               ),
-            ),
-          )
+              result?.code != null ? ElevatedButton(
+                onPressed: () async {
+                    FlutterClipboard.copy(result.code);
+                    setState(() {});
+                },
+                child: Text('Copy'),
+              ) : SizedBox(height: 24.0),
+              // const SizedBox(height: 20.0),
+            ],
+          ))
+
+          // Spacer(),
+          // Expanded(
+          //   flex: 1,
+          //   child: FittedBox(
+          //     fit: BoxFit.contain,
+          //     child: Column(
+          //       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          //       children: <Widget>[
+          //         if (result?.code != null)
+          //           Text(result.code)
+          //         else
+          //           Text('Please Scan a code...')
+          //       ],
+          //     ),
+          //   ),
+          // ),
+          // Expanded(
+          //     flex: 1,
+          //     child: Row(
+          //       mainAxisAlignment: MainAxisAlignment.center,
+          //       crossAxisAlignment: CrossAxisAlignment.center,
+          //       children: <Widget>[
+          //         Container(
+          //           margin: EdgeInsets.all(8),
+          //           child: TextButton(
+          //               onPressed: () async {
+          //                 await controller?.toggleFlash();
+          //                 setState(() {});
+          //               },
+          //               child: FutureBuilder(
+          //                 future: _future,
+          //                 builder: (context, snapshot) {
+          //                   return snapshot.data == null ? Text("Unknown") : snapshot.data ? Text("On") : Text("Off");
+          //                 },
+          //               )),
+          //         ),
+          //         Container(
+          //             margin: EdgeInsets.all(8),
+          //             child: TextButton(
+          //               onPressed: () async {
+          //                 if (result != null) {
+          //                   FlutterClipboard.copy(result.code);
+          //                 }
+          //                 setState(() {});
+          //               },
+          //               child: Text("Copy"),
+          //             )
+          //         )
+          //       ],
+          //     ),
+          // ),
         ],
       ),
     );
