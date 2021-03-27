@@ -14,7 +14,8 @@ flutter pub run flutter_launcher_icons:main
 flutter build ios --release
 ```
 
-## Installation
+## Install onto a device
+Connect your iOS device with USB cable and run the following command:
 ```bash
  ideviceinstaller -i build/ios/iphoneos/Runner.app
 ```
