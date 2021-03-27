@@ -40,8 +40,7 @@ class _PhotoScannerScreenState extends State<PhotoScannerScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-        child: Scaffold(
+    return Scaffold(
       appBar: AppBar(
           backgroundColor: Colors.black,
           leading: BackButton(
@@ -50,7 +49,7 @@ class _PhotoScannerScreenState extends State<PhotoScannerScreen> {
           actions: <Widget>[
             IconButton(
                 icon: const Icon(Icons.add_photo_alternate),
-                tooltip: 'Show Snackbar',
+                tooltip: 'Select a photo',
                 onPressed: getImage),
           ],
           title: Text("Photos")),
@@ -65,6 +64,6 @@ class _PhotoScannerScreenState extends State<PhotoScannerScreen> {
               child: Text("Please select a photo.",
                   style: TextStyle(color: Colors.white))),
       backgroundColor: Colors.black,
-    ));
+    );
   }
 }
