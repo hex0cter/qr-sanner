@@ -2,9 +2,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'dart:io';
-import 'package:flutter/foundation.dart';
-import 'package:clipboard/clipboard.dart';
 import 'dart:async';
+import 'package:qr_scanner/ui/scan_result.dart';
+
+final RouteObserver<PageRoute> routeObserver = RouteObserver<PageRoute>();
+
 
 class CameraScannerScreen extends StatefulWidget {
   const CameraScannerScreen({
@@ -16,8 +18,9 @@ class CameraScannerScreen extends StatefulWidget {
 }
 
 class _CameraScannerScreenState extends State<CameraScannerScreen>
-    with WidgetsBindingObserver {
-  String textData = "";
+    with WidgetsBindingObserver, RouteAware {
+
+  String data = "";
   QRViewController controller;
   Timer timer;
   bool flash;
@@ -28,6 +31,25 @@ class _CameraScannerScreenState extends State<CameraScannerScreen>
   void initState() {
     WidgetsBinding.instance.addObserver(this);
     super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    routeObserver.subscribe(this, ModalRoute.of(context));
+  }
+
+  @override
+  void didPush() {
+    print("did push");
+    // Route was pushed onto navigator and is now topmost route.
+  }
+
+  @override
+  void didPopNext() {
+    controller?.resumeCamera();
+    print("did pop next");
+    // Covering route was popped off the navigator.
   }
 
   @override
@@ -60,7 +82,6 @@ class _CameraScannerScreenState extends State<CameraScannerScreen>
       print(err);
     });
 
-    String text = textData == "" ? "Please scan a code ..." : textData;
     return Scaffold(
       body: Stack(
         children: <Widget>[
@@ -95,9 +116,10 @@ class _CameraScannerScreenState extends State<CameraScannerScreen>
               Positioned(
                 child: IconButton(
                   icon:
-                      Icon(Icons.photo_album, color: Colors.white70, size: 30),
+                      Icon(Icons.add_photo_alternate, color: Colors.white70, size: 34),
                   tooltip: 'Album',
                   onPressed: () {
+                    controller.pauseCamera();
                     Navigator.pushNamed(context, "/photo");
                   },
                 ),
@@ -110,39 +132,7 @@ class _CameraScannerScreenState extends State<CameraScannerScreen>
               bottom: 0,
               child: SizedBox(
                 height: 160,
-                child: Column(
-                  children: [
-                    Opacity(
-                        opacity: 0.6,
-                        child: SizedBox(
-                            width: MediaQuery.of(context).size.width,
-                            height: 48,
-                            child: Padding(
-                              padding: const EdgeInsets.only(
-                                  left: 18.0, right: 18.0),
-                              child: Text(text,
-                                  style: TextStyle(
-                                      fontFamily: "Arial Rounded",
-                                      fontWeight: FontWeight.normal,
-                                      color: Colors.white)),
-                            ))),
-                    textData != ""
-                        ? CupertinoButton(
-                            onPressed: () async {
-                              FlutterClipboard.copy(textData);
-                              ScaffoldMessenger.of(context)
-                                  .showSnackBar(SnackBar(
-                                content: Text("Copied to clipboard."),
-                                duration: Duration(seconds: 1),
-                              ));
-                              setState(() {});
-                            },
-                            child: Text('Copy'),
-                          )
-                        : SizedBox(height: 24.0),
-                    // const SizedBox(height: 20.0),
-                  ],
-                ),
+                child: ScanResultWidget(data: data)
               ))
         ],
       ),
@@ -175,13 +165,13 @@ class _CameraScannerScreenState extends State<CameraScannerScreen>
     });
     controller.scannedDataStream.listen((scanData) {
       setState(() {
-        textData = scanData?.code != null ? scanData.code : "";
+        data = scanData?.code != null ? scanData.code : "";
       });
 
       timer?.cancel();
       timer = new Timer(new Duration(seconds: 5), () {
         setState(() {
-          textData = "";
+          data = "";
         });
       });
     });
@@ -189,6 +179,7 @@ class _CameraScannerScreenState extends State<CameraScannerScreen>
 
   @override
   void dispose() {
+    routeObserver.unsubscribe(this);
     controller?.dispose();
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
