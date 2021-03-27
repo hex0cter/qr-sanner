@@ -65,7 +65,6 @@ class _QRViewWidgetState extends State<QRViewWidget>
       body: Stack(
         children: <Widget>[
           Container(
-              // flex: 5,
               child: Stack(
             children: [
               _buildQrView(context),
@@ -86,12 +85,21 @@ class _QRViewWidgetState extends State<QRViewWidget>
                   tooltip: 'Flash',
                   onPressed: () {
                     setState(() {
-                      // _volume += 10;
                       controller.toggleFlash();
                     });
                   },
                 ),
-                top: 40.0,
+                top: 60.0,
+                left: 10.0,
+              ),
+              Positioned(
+                child: IconButton(
+                  icon:
+                      Icon(Icons.photo_album, color: Colors.white70, size: 30),
+                  tooltip: 'Album',
+                  onPressed: () {},
+                ),
+                top: 60.0,
                 right: 10.0,
               )
             ],
