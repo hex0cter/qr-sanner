@@ -1,4 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:qr_scanner/ui/qr_code_scanner.dart';
+import 'package:qr_scanner/ui/screens/camera_scanner_screen.dart';
+import 'package:qr_scanner/ui/screens/photo_scanner_screen.dart';
 
-void main() => runApp(MaterialApp(home: QRViewWidget()));
+void main() {
+  return runApp(MaterialApp(initialRoute: '/camera', navigatorObservers: [
+    routeObserver
+  ], routes: {
+    "/camera": (context) => CameraScannerScreen(),
+    "/photo": (context) => PhotoScannerScreen()
+  }));
+}

@@ -2,22 +2,23 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'dart:io';
-import 'package:flutter/foundation.dart';
-import 'package:clipboard/clipboard.dart';
 import 'dart:async';
+import 'package:qr_scanner/ui/widgets/scan_result.dart';
 
-class QRViewWidget extends StatefulWidget {
-  const QRViewWidget({
+final RouteObserver<PageRoute> routeObserver = RouteObserver<PageRoute>();
+
+class CameraScannerScreen extends StatefulWidget {
+  const CameraScannerScreen({
     Key key,
   }) : super(key: key);
 
   @override
-  State<StatefulWidget> createState() => _QRViewWidgetState();
+  State<StatefulWidget> createState() => _CameraScannerScreenState();
 }
 
-class _QRViewWidgetState extends State<QRViewWidget>
-    with WidgetsBindingObserver {
-  String textData = "";
+class _CameraScannerScreenState extends State<CameraScannerScreen>
+    with WidgetsBindingObserver, RouteAware {
+  String data = "";
   QRViewController controller;
   Timer timer;
   bool flash;
@@ -31,12 +32,34 @@ class _QRViewWidgetState extends State<QRViewWidget>
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    routeObserver.subscribe(this, ModalRoute.of(context));
+  }
+
+  @override
+  void didPush() {
+    print("did push");
+    // Route was pushed onto navigator and is now topmost route.
+  }
+
+  @override
+  void didPopNext() {
+    print("did pop next");
+    print(ModalRoute.of(context).isCurrent);
+    controller.resumeCamera();
+    // Covering route was popped off the navigator.
+  }
+
+  @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     print('state = $state');
     if (state == AppLifecycleState.paused) {
       controller.pauseCamera();
     }
-    if (state == AppLifecycleState.resumed) {
+    if (state == AppLifecycleState.resumed &&
+        ModalRoute.of(context).isCurrent) {
+      print("resume camera");
       controller.resumeCamera();
     }
   }
@@ -60,12 +83,10 @@ class _QRViewWidgetState extends State<QRViewWidget>
       print(err);
     });
 
-    String text = textData == "" ? "Please scan a code ..." : textData;
     return Scaffold(
       body: Stack(
         children: <Widget>[
           Container(
-              // flex: 5,
               child: Stack(
             children: [
               _buildQrView(context),
@@ -86,54 +107,30 @@ class _QRViewWidgetState extends State<QRViewWidget>
                   tooltip: 'Flash',
                   onPressed: () {
                     setState(() {
-                      // _volume += 10;
                       controller.toggleFlash();
                     });
                   },
                 ),
-                top: 40.0,
+                top: 60.0,
+                left: 10.0,
+              ),
+              Positioned(
+                child: IconButton(
+                  icon:
+                      Icon(Icons.insert_photo, color: Colors.white70, size: 34),
+                  tooltip: 'Album',
+                  onPressed: () {
+                    print("pause camera");
+                    controller.pauseCamera();
+                    Navigator.pushNamed(context, "/photo");
+                  },
+                ),
+                top: 60.0,
                 right: 10.0,
               )
             ],
           )),
-          Positioned(
-              bottom: 0,
-              child: SizedBox(
-                height: 160,
-                child: Column(
-                  children: [
-                    Opacity(
-                        opacity: 0.6,
-                        child: SizedBox(
-                            width: MediaQuery.of(context).size.width,
-                            height: 48,
-                            child: Padding(
-                              padding: const EdgeInsets.only(
-                                  left: 18.0, right: 18.0),
-                              child: Text(text,
-                                  style: TextStyle(
-                                      fontFamily: "Arial Rounded",
-                                      fontWeight: FontWeight.normal,
-                                      color: Colors.white)),
-                            ))),
-                    textData != ""
-                        ? CupertinoButton(
-                            onPressed: () async {
-                              FlutterClipboard.copy(textData);
-                              ScaffoldMessenger.of(context)
-                                  .showSnackBar(SnackBar(
-                                content: Text("Copied to clipboard."),
-                                duration: Duration(seconds: 1),
-                              ));
-                              setState(() {});
-                            },
-                            child: Text('Copy'),
-                          )
-                        : SizedBox(height: 24.0),
-                    // const SizedBox(height: 20.0),
-                  ],
-                ),
-              ))
+          ScanResultWidget(data: data)
         ],
       ),
     );
@@ -165,13 +162,13 @@ class _QRViewWidgetState extends State<QRViewWidget>
     });
     controller.scannedDataStream.listen((scanData) {
       setState(() {
-        textData = scanData?.code != null ? scanData.code : "";
+        data = scanData?.code != null ? scanData.code : "";
       });
 
       timer?.cancel();
       timer = new Timer(new Duration(seconds: 5), () {
         setState(() {
-          textData = "";
+          data = "";
         });
       });
     });
@@ -179,6 +176,7 @@ class _QRViewWidgetState extends State<QRViewWidget>
 
   @override
   void dispose() {
+    routeObserver.unsubscribe(this);
     controller?.dispose();
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
