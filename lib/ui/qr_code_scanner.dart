@@ -91,58 +91,6 @@ class _QRViewWidgetState extends State<QRViewWidget> with WidgetsBindingObserver
               // const SizedBox(height: 20.0),
             ],
           ))
-
-          // Spacer(),
-          // Expanded(
-          //   flex: 1,
-          //   child: FittedBox(
-          //     fit: BoxFit.contain,
-          //     child: Column(
-          //       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          //       children: <Widget>[
-          //         if (result?.code != null)
-          //           Text(result.code)
-          //         else
-          //           Text('Please Scan a code...')
-          //       ],
-          //     ),
-          //   ),
-          // ),
-          // Expanded(
-          //     flex: 1,
-          //     child: Row(
-          //       mainAxisAlignment: MainAxisAlignment.center,
-          //       crossAxisAlignment: CrossAxisAlignment.center,
-          //       children: <Widget>[
-          //         Container(
-          //           margin: EdgeInsets.all(8),
-          //           child: TextButton(
-          //               onPressed: () async {
-          //                 await controller?.toggleFlash();
-          //                 setState(() {});
-          //               },
-          //               child: FutureBuilder(
-          //                 future: _future,
-          //                 builder: (context, snapshot) {
-          //                   return snapshot.data == null ? Text("Unknown") : snapshot.data ? Text("On") : Text("Off");
-          //                 },
-          //               )),
-          //         ),
-          //         Container(
-          //             margin: EdgeInsets.all(8),
-          //             child: TextButton(
-          //               onPressed: () async {
-          //                 if (result != null) {
-          //                   FlutterClipboard.copy(result.code);
-          //                 }
-          //                 setState(() {});
-          //               },
-          //               child: Text("Copy"),
-          //             )
-          //         )
-          //       ],
-          //     ),
-          // ),
         ],
       ),
     );
@@ -178,7 +126,7 @@ class _QRViewWidgetState extends State<QRViewWidget> with WidgetsBindingObserver
       });
 
       timer?.cancel();
-      timer = new Timer(new Duration(seconds: 100), () {
+      timer = new Timer(new Duration(seconds: 5), () {
         setState(() {
           textData = "";
         });
