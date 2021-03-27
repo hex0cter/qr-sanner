@@ -17,7 +17,7 @@ class ScanResultWidget extends StatelessWidget {
           decoration: new BoxDecoration(
               // border: new Border.all(width: borderWidth ,color: Colors.transparent), //color is transparent so that it does not blend with the actual color specified
               // borderRadius: const BorderRadius.all(const Radius.circular(30.0)),
-              color: new Color.fromRGBO(55, 55, 55, 0.5) // Specifies the background color and the opacity
+              color: new Color.fromRGBO(55, 55, 55, 0.8) // Specifies the background color and the opacity
           ),
           child: Column(
             children: [
@@ -25,10 +25,10 @@ class ScanResultWidget extends StatelessWidget {
                   opacity: 1,
                   child: SizedBox(
                       width: MediaQuery.of(context).size.width,
-                      height: 48,
+                      height: 99,
                       child: Padding(
                         padding: const EdgeInsets.only(
-                            left: 18.0, right: 18.0),
+                            left: 18.0, right: 18.0, top: 18.0),
                         child: Text(data == "" ? "No QR code found." : data,
                             style: TextStyle(
                                 fontFamily: "Arial Rounded",

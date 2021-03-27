@@ -48,9 +48,10 @@ class _PhotoScannerScreenState extends State<PhotoScannerScreen> {
           ),
           actions: <Widget>[
             IconButton(
-                icon: const Icon(Icons.add_photo_alternate),
+                icon: const Icon(Icons.add_photo_alternate, size: 28),
                 tooltip: 'Select a photo',
-                onPressed: getImage),
+                onPressed: getImage,
+            ),
           ],
           title: Text("Photos")),
       body: _image != null
