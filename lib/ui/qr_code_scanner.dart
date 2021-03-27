@@ -21,6 +21,8 @@ class _QRViewWidgetState extends State<QRViewWidget> with WidgetsBindingObserver
   String textData = "";
   QRViewController controller;
   Timer timer;
+  bool flash;
+
   final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
 
   @override
@@ -36,13 +38,10 @@ class _QRViewWidgetState extends State<QRViewWidget> with WidgetsBindingObserver
       controller.pauseCamera();
     }
     if(state == AppLifecycleState.resumed) {
-      setState(() {
-        textData = "";
-      });
       controller.resumeCamera();
     }
-
   }
+
   // In order to get hot reload to work we need to pause the camera if the platform
   // is android, or resume the camera if the platform is iOS.
   @override
@@ -66,13 +65,35 @@ class _QRViewWidgetState extends State<QRViewWidget> with WidgetsBindingObserver
     return Scaffold(
       body: Column(
         children: <Widget>[
-          Expanded(flex: 5, child: _buildQrView(context)),
+          Expanded(
+              flex: 5,
+              child: Stack(
+                children: [
+                  _buildQrView(context),
+                  Positioned(
+                    child: IconButton(
+                      icon: const Icon(Icons.flash_off),
+                      tooltip: 'Flash',
+                      onPressed: () {
+                        setState(() {
+                          // _volume += 10;
+                          print("clicked on flash icon.");
+                        });
+                      },
+                    ),
+                    bottom: 10.0,
+                    left: 10.0,
+                  )
+                ],
+              )
+          ),
           Expanded(child: Column(
             children: [
               Container(
                 padding: const EdgeInsets.only(left: 16.0, top: 16.0, right: 16.0, bottom: 0.0),
                 width: MediaQuery.of(context).size.width,
-                child: SizedBox(height: 48,
+                child: SizedBox(
+                    height: 48,
                     child: Text(text,
                       style: TextStyle(
                           fontFamily: "Arial Rounded",
