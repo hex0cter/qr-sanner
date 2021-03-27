@@ -1,21 +1,25 @@
-# qr_scanner
+# QR Scanner
 
-A simple QR code scanner.
+A simple QR code scanner written in Flutter. Barcode is also supported in camera mode.
 
-## Getting Started
+## Install dependencies
 
 ```
 flutter pub get
 flutter pub run flutter_launcher_icons:main
 ```
 
-This project is a starting point for a Flutter application.
+## Build releases
+```bash
+flutter build ios --release
+```
 
-A few resources to get you started if this is your first Flutter project:
+## Installation
+```bash
+ ideviceinstaller -i build/ios/iphoneos/Runner.app
+```
 
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
-
+## References
 For help getting started with Flutter, view our
 [online documentation](https://flutter.dev/docs), which offers tutorials,
 samples, guidance on mobile development, and a full API reference.
