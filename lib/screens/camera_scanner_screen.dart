@@ -47,8 +47,9 @@ class _CameraScannerScreenState extends State<CameraScannerScreen>
 
   @override
   void didPopNext() {
-    controller?.resumeCamera();
     print("did pop next");
+    print(ModalRoute.of(context).isCurrent);
+    controller.resumeCamera();
     // Covering route was popped off the navigator.
   }
 
@@ -58,7 +59,8 @@ class _CameraScannerScreenState extends State<CameraScannerScreen>
     if (state == AppLifecycleState.paused) {
       controller.pauseCamera();
     }
-    if (state == AppLifecycleState.resumed) {
+    if (state == AppLifecycleState.resumed && ModalRoute.of(context).isCurrent) {
+      print("resume camera");
       controller.resumeCamera();
     }
   }
@@ -116,9 +118,10 @@ class _CameraScannerScreenState extends State<CameraScannerScreen>
               Positioned(
                 child: IconButton(
                   icon:
-                      Icon(Icons.add_photo_alternate, color: Colors.white70, size: 34),
+                      Icon(Icons.insert_photo, color: Colors.white70, size: 34),
                   tooltip: 'Album',
                   onPressed: () {
+                    print("pause camera");
                     controller.pauseCamera();
                     Navigator.pushNamed(context, "/photo");
                   },
@@ -128,12 +131,7 @@ class _CameraScannerScreenState extends State<CameraScannerScreen>
               )
             ],
           )),
-          Positioned(
-              bottom: 0,
-              child: SizedBox(
-                height: 160,
-                child: ScanResultWidget(data: data)
-              ))
+          ScanResultWidget(data: data)
         ],
       ),
     );
