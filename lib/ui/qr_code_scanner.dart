@@ -3,6 +3,8 @@ import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:clipboard/clipboard.dart';
+import 'dart:async';
+
 
 class QRViewWidget extends StatefulWidget {
 
@@ -15,8 +17,9 @@ class QRViewWidget extends StatefulWidget {
 }
 
 class _QRViewWidgetState extends State<QRViewWidget> with WidgetsBindingObserver {
-  Barcode result;
+  String textData = "";
   QRViewController controller;
+  Timer timer;
   final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
 
   @override
@@ -32,6 +35,9 @@ class _QRViewWidgetState extends State<QRViewWidget> with WidgetsBindingObserver
       controller.pauseCamera();
     }
     if(state == AppLifecycleState.resumed) {
+      setState(() {
+        textData = "";
+      });
       controller.resumeCamera();
     }
 
@@ -55,28 +61,28 @@ class _QRViewWidgetState extends State<QRViewWidget> with WidgetsBindingObserver
       print(err);
     });
 
-    // double c_width = MediaQuery.of(context).size.width;
-    String text = result?.code == null ? "Please scan a code ..." : result.code;
+    String text = textData == "" ? "Please scan a code ..." : textData;
     return Scaffold(
       body: Column(
         children: <Widget>[
           Expanded(flex: 5, child: _buildQrView(context)),
           Expanded(child: Column(
             children: [
-              FittedBox(
-                fit: BoxFit.contain,
-                child: Container (
-                  padding: const EdgeInsets.only(left: 16.0, top: 16.0, right: 16.0, bottom: 0.0),
-                  width: MediaQuery.of(context).size.width,
-                  child: Text(text.length > 120 ? '${text.substring(0, 117)}...' : text.padLeft(120),
-                      textAlign: TextAlign.left,
-                    style: TextStyle(fontFamily: "Arial Rounded", fontWeight: FontWeight.normal),
-                  )
-                ),
+              Container(
+                padding: const EdgeInsets.only(left: 16.0, top: 16.0, right: 16.0, bottom: 12.0),
+                width: MediaQuery.of(context).size.width,
+                child: SizedBox(height: 48,
+                    child: Text(text,
+                      style: TextStyle(
+                          fontFamily: "Arial Rounded",
+                          fontWeight: FontWeight.normal
+                      )
+                    )
+                )
               ),
-              result?.code != null ? ElevatedButton(
+              textData != "" ? ElevatedButton(
                 onPressed: () async {
-                    FlutterClipboard.copy(result.code);
+                    FlutterClipboard.copy(textData);
                     setState(() {});
                 },
                 child: Text('Copy'),
@@ -167,7 +173,14 @@ class _QRViewWidgetState extends State<QRViewWidget> with WidgetsBindingObserver
     });
     controller.scannedDataStream.listen((scanData) {
       setState(() {
-        result = scanData;
+        textData = scanData?.code != null ? scanData.code : "";
+      });
+
+      timer?.cancel();
+      timer = new Timer(new Duration(seconds: 1), () {
+        setState(() {
+          textData = "";
+        });
       });
     });
   }
