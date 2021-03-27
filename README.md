@@ -4,6 +4,11 @@ A simple QR code scanner.
 
 ## Getting Started
 
+```
+flutter pub get
+flutter pub run flutter_launcher_icons:main
+```
+
 This project is a starting point for a Flutter application.
 
 A few resources to get you started if this is your first Flutter project:
