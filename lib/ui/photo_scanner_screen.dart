@@ -40,9 +40,14 @@ class _PhotoScannerScreenState extends State<PhotoScannerScreen> {
                   onPressed: () => Navigator.of(context).pop(),
                 ),
                 title: Text("Photos")),
-            body: CupertinoButton(
-              child: Text("Select a photo"),
-              onPressed: getImage,
+            body: Column(
+              children: [
+                CupertinoButton(
+                  child: Text("Select a photo ..."),
+                  onPressed: getImage,
+                ),
+                _image != null ? Image.file(_image) : Container(),
+              ]
             )));
   }
 }
