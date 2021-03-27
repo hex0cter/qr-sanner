@@ -11,9 +11,12 @@ class _PhotoScannerScreenState extends State<PhotoScannerScreen> {
   Widget build(BuildContext context) {
     return SafeArea(
         child: Scaffold(
-            appBar: AppBar(leading: BackButton(
-              onPressed: () => Navigator.of(context).pop(),
-            ), title: Text("Photos")),
+            appBar: AppBar(
+                backgroundColor: Colors.black,
+                leading: BackButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                ),
+                title: Text("Photos")),
             body: Text("photo")));
   }
 }
