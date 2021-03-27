@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'dart:io';
@@ -69,7 +70,7 @@ class _QRViewWidgetState extends State<QRViewWidget> with WidgetsBindingObserver
           Expanded(child: Column(
             children: [
               Container(
-                padding: const EdgeInsets.only(left: 16.0, top: 16.0, right: 16.0, bottom: 12.0),
+                padding: const EdgeInsets.only(left: 16.0, top: 16.0, right: 16.0, bottom: 0.0),
                 width: MediaQuery.of(context).size.width,
                 child: SizedBox(height: 48,
                     child: Text(text,
@@ -80,7 +81,7 @@ class _QRViewWidgetState extends State<QRViewWidget> with WidgetsBindingObserver
                     )
                 )
               ),
-              textData != "" ? ElevatedButton(
+              textData != "" ? CupertinoButton(
                 onPressed: () async {
                     FlutterClipboard.copy(textData);
                     setState(() {});
@@ -177,7 +178,7 @@ class _QRViewWidgetState extends State<QRViewWidget> with WidgetsBindingObserver
       });
 
       timer?.cancel();
-      timer = new Timer(new Duration(seconds: 1), () {
+      timer = new Timer(new Duration(seconds: 100), () {
         setState(() {
           textData = "";
         });
