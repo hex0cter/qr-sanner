@@ -57,13 +57,23 @@ class _PhotoScannerScreenState extends State<PhotoScannerScreen> {
       body: _image != null
           ? Stack(
               children: [
-                Center(child: Image.file(_image)),
+                Container(
+                  width: MediaQuery.of(context).size.width,
+                  height: MediaQuery.of(context).size.height,
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                      fit: BoxFit.fill,
+                      image: FileImage(_image),
+                    ),
+                  ),
+                ),
+                // FittedBox(child: Image.file(_image), fit: BoxFit.fill),
                 ScanResultWidget(data: _data)
               ],
             )
           : Center(
               child: Text("Please select a photo.",
-                  style: TextStyle(color: Colors.white))),
+                  style: TextStyle(color: Colors.white, fontSize: 20.0))),
       backgroundColor: Colors.black,
     );
   }
