@@ -72,12 +72,22 @@ class _QRViewWidgetState extends State<QRViewWidget> with WidgetsBindingObserver
                   _buildQrView(context),
                   Positioned(
                     child: IconButton(
-                      icon: const Icon(Icons.flash_off),
+                      icon: FutureBuilder(
+                        future: _future,
+                        builder: (context, snapshot) {
+                          print(snapshot?.data);
+                          return Icon(
+                              snapshot?.data == true ? Icons.flash_on : Icons.flash_off,
+                              color: Colors.white70,
+                              size: 30
+                          );
+                        },
+                      ),
                       tooltip: 'Flash',
                       onPressed: () {
                         setState(() {
                           // _volume += 10;
-                          print("clicked on flash icon.");
+                          controller.toggleFlash();
                         });
                       },
                     ),
