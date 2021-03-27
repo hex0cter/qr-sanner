@@ -6,9 +6,7 @@ import 'package:flutter/foundation.dart';
 import 'package:clipboard/clipboard.dart';
 import 'dart:async';
 
-
 class QRViewWidget extends StatefulWidget {
-
   const QRViewWidget({
     Key key,
   }) : super(key: key);
@@ -17,7 +15,8 @@ class QRViewWidget extends StatefulWidget {
   State<StatefulWidget> createState() => _QRViewWidgetState();
 }
 
-class _QRViewWidgetState extends State<QRViewWidget> with WidgetsBindingObserver {
+class _QRViewWidgetState extends State<QRViewWidget>
+    with WidgetsBindingObserver {
   String textData = "";
   QRViewController controller;
   Timer timer;
@@ -37,7 +36,7 @@ class _QRViewWidgetState extends State<QRViewWidget> with WidgetsBindingObserver
     if (state == AppLifecycleState.paused) {
       controller.pauseCamera();
     }
-    if(state == AppLifecycleState.resumed) {
+    if (state == AppLifecycleState.resumed) {
       controller.resumeCamera();
     }
   }
@@ -63,71 +62,75 @@ class _QRViewWidgetState extends State<QRViewWidget> with WidgetsBindingObserver
 
     String text = textData == "" ? "Please scan a code ..." : textData;
     return Scaffold(
-      body: Column(
+      body: Stack(
         children: <Widget>[
-          Expanded(
-              flex: 5,
+          Container(
+              // flex: 5,
               child: Stack(
-                children: [
-                  _buildQrView(context),
-                  Positioned(
-                    child: IconButton(
-                      icon: FutureBuilder(
-                        future: _future,
-                        builder: (context, snapshot) {
-                          print(snapshot?.data);
-                          return Icon(
-                              snapshot?.data == true ? Icons.flash_on : Icons.flash_off,
-                              color: Colors.white70,
-                              size: 30
-                          );
-                        },
-                      ),
-                      tooltip: 'Flash',
-                      onPressed: () {
-                        setState(() {
-                          // _volume += 10;
-                          controller.toggleFlash();
-                        });
-                      },
-                    ),
-                    bottom: 10.0,
-                    left: 10.0,
-                  )
-                ],
-              )
-          ),
-          Expanded(child: Column(
             children: [
-              Container(
-                padding: const EdgeInsets.only(left: 16.0, top: 16.0, right: 16.0, bottom: 0.0),
-                width: MediaQuery.of(context).size.width,
-                child: SizedBox(
-                    height: 48,
-                    child: Text(text,
-                      style: TextStyle(
-                          fontFamily: "Arial Rounded",
-                          fontWeight: FontWeight.normal
-                      )
-                    )
-                )
-              ),
-              textData != "" ? CupertinoButton(
-                onPressed: () async {
-                    FlutterClipboard.copy(textData);
-                    ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text("Copied to clipboard."),
-                          duration: Duration(seconds: 1),
-                        )
-                    );
-                    setState(() {});
-                },
-                child: Text('Copy'),
-              ) : SizedBox(height: 24.0),
-              // const SizedBox(height: 20.0),
+              _buildQrView(context),
+              Positioned(
+                child: IconButton(
+                  icon: FutureBuilder(
+                    future: _future,
+                    builder: (context, snapshot) {
+                      print(snapshot?.data);
+                      return Icon(
+                          snapshot?.data == true
+                              ? Icons.flash_on
+                              : Icons.flash_off,
+                          color: Colors.white70,
+                          size: 30);
+                    },
+                  ),
+                  tooltip: 'Flash',
+                  onPressed: () {
+                    setState(() {
+                      // _volume += 10;
+                      controller.toggleFlash();
+                    });
+                  },
+                ),
+                top: 40.0,
+                right: 10.0,
+              )
             ],
-          ))
+          )),
+          Positioned(
+              bottom: 0,
+              child: SizedBox(
+                height: 160,
+                child: Column(
+                  children: [
+                    Container(
+                        padding: const EdgeInsets.only(
+                            left: 16.0, top: 16.0, right: 16.0, bottom: 0.0),
+                        width: MediaQuery.of(context).size.width,
+                        child: SizedBox(
+                            height: 48,
+                            child: Text(text,
+                                style: TextStyle(
+                                    fontFamily: "Arial Rounded",
+                                    fontWeight: FontWeight.normal,
+                                    color: Colors.white70)))),
+                    textData != ""
+                        ? CupertinoButton(
+                            onPressed: () async {
+                              FlutterClipboard.copy(textData);
+                              ScaffoldMessenger.of(context)
+                                  .showSnackBar(SnackBar(
+                                content: Text("Copied to clipboard."),
+                                duration: Duration(seconds: 1),
+                              ));
+                              setState(() {});
+                            },
+                            child: Text('Copy'),
+                          )
+                        : SizedBox(height: 24.0),
+                    // const SizedBox(height: 20.0),
+                  ],
+                ),
+              ))
         ],
       ),
     );
@@ -136,7 +139,7 @@ class _QRViewWidgetState extends State<QRViewWidget> with WidgetsBindingObserver
   Widget _buildQrView(BuildContext context) {
     // For this example we check how width or tall the device is and change the scanArea and overlay accordingly.
     var scanArea = (MediaQuery.of(context).size.width < 400 ||
-        MediaQuery.of(context).size.height < 400)
+            MediaQuery.of(context).size.height < 400)
         ? 300.0
         : 300.0;
     // To ensure the Scanner view is properly sizes after rotation
