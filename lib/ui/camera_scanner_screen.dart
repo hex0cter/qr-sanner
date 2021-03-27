@@ -98,7 +98,7 @@ class _CameraScannerScreenState extends State<CameraScannerScreen>
                       Icon(Icons.photo_album, color: Colors.white70, size: 30),
                   tooltip: 'Album',
                   onPressed: () {
-                    Navigator.pushReplacementNamed(context, "/photo");
+                    Navigator.pushNamed(context, "/photo");
                   },
                 ),
                 top: 60.0,

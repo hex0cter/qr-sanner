@@ -1,4 +1,3 @@
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -10,6 +9,11 @@ class PhotoScannerScreen extends StatefulWidget {
 class _PhotoScannerScreenState extends State<PhotoScannerScreen> {
   @override
   Widget build(BuildContext context) {
-    return SafeArea(child: Scaffold(body: Text("photo")));
+    return SafeArea(
+        child: Scaffold(
+            appBar: AppBar(leading: BackButton(
+              onPressed: () => Navigator.of(context).pop(),
+            ), title: Text("Photos")),
+            body: Text("photo")));
   }
 }
