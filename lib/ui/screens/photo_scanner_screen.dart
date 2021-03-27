@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'package:qr_code_tools/qr_code_tools.dart';
-import 'package:qr_scanner/ui/scan_result.dart';
+import 'package:qr_scanner/ui/widgets/scan_result.dart';
 
 class PhotoScannerScreen extends StatefulWidget {
   @override
@@ -42,27 +42,29 @@ class _PhotoScannerScreenState extends State<PhotoScannerScreen> {
   Widget build(BuildContext context) {
     return SafeArea(
         child: Scaffold(
-            appBar: AppBar(
-                backgroundColor: Colors.black,
-                leading: BackButton(
-                  onPressed: () => Navigator.of(context).pop(),
-                ),
-                actions: <Widget>[
-                  IconButton(
-                      icon: const Icon(Icons.add_photo_alternate),
-                      tooltip: 'Show Snackbar',
-                      onPressed: getImage
-                  ),
-                ],
-                title: Text("Photos")),
-            body: _image != null ? Stack(
+      appBar: AppBar(
+          backgroundColor: Colors.black,
+          leading: BackButton(
+            onPressed: () => Navigator.of(context).pop(),
+          ),
+          actions: <Widget>[
+            IconButton(
+                icon: const Icon(Icons.add_photo_alternate),
+                tooltip: 'Show Snackbar',
+                onPressed: getImage),
+          ],
+          title: Text("Photos")),
+      body: _image != null
+          ? Stack(
               children: [
                 Center(child: Image.file(_image)),
                 ScanResultWidget(data: _data)
               ],
-            ) :  Center(child: Text("Please select a photo.", style: TextStyle(color: Colors.white))),
-            backgroundColor: Colors.black,
-        )
-    );
+            )
+          : Center(
+              child: Text("Please select a photo.",
+                  style: TextStyle(color: Colors.white))),
+      backgroundColor: Colors.black,
+    ));
   }
 }

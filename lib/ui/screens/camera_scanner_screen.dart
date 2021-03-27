@@ -3,10 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'dart:io';
 import 'dart:async';
-import 'package:qr_scanner/ui/scan_result.dart';
+import 'package:qr_scanner/ui/widgets/scan_result.dart';
 
 final RouteObserver<PageRoute> routeObserver = RouteObserver<PageRoute>();
-
 
 class CameraScannerScreen extends StatefulWidget {
   const CameraScannerScreen({
@@ -19,7 +18,6 @@ class CameraScannerScreen extends StatefulWidget {
 
 class _CameraScannerScreenState extends State<CameraScannerScreen>
     with WidgetsBindingObserver, RouteAware {
-
   String data = "";
   QRViewController controller;
   Timer timer;
@@ -59,7 +57,8 @@ class _CameraScannerScreenState extends State<CameraScannerScreen>
     if (state == AppLifecycleState.paused) {
       controller.pauseCamera();
     }
-    if (state == AppLifecycleState.resumed && ModalRoute.of(context).isCurrent) {
+    if (state == AppLifecycleState.resumed &&
+        ModalRoute.of(context).isCurrent) {
       print("resume camera");
       controller.resumeCamera();
     }
