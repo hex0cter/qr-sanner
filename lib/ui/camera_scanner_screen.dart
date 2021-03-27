@@ -6,16 +6,16 @@ import 'package:flutter/foundation.dart';
 import 'package:clipboard/clipboard.dart';
 import 'dart:async';
 
-class QRViewWidget extends StatefulWidget {
-  const QRViewWidget({
+class CameraScannerScreen extends StatefulWidget {
+  const CameraScannerScreen({
     Key key,
   }) : super(key: key);
 
   @override
-  State<StatefulWidget> createState() => _QRViewWidgetState();
+  State<StatefulWidget> createState() => _CameraScannerScreenState();
 }
 
-class _QRViewWidgetState extends State<QRViewWidget>
+class _CameraScannerScreenState extends State<CameraScannerScreen>
     with WidgetsBindingObserver {
   String textData = "";
   QRViewController controller;
@@ -97,7 +97,9 @@ class _QRViewWidgetState extends State<QRViewWidget>
                   icon:
                       Icon(Icons.photo_album, color: Colors.white70, size: 30),
                   tooltip: 'Album',
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.pushReplacementNamed(context, "/photo");
+                  },
                 ),
                 top: 60.0,
                 right: 10.0,
