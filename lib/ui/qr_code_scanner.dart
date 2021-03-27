@@ -102,17 +102,20 @@ class _QRViewWidgetState extends State<QRViewWidget>
                 height: 160,
                 child: Column(
                   children: [
-                    Container(
-                        padding: const EdgeInsets.only(
-                            left: 16.0, top: 16.0, right: 16.0, bottom: 0.0),
-                        width: MediaQuery.of(context).size.width,
+                    Opacity(
+                        opacity: 0.6,
                         child: SizedBox(
+                            width: MediaQuery.of(context).size.width,
                             height: 48,
-                            child: Text(text,
-                                style: TextStyle(
-                                    fontFamily: "Arial Rounded",
-                                    fontWeight: FontWeight.normal,
-                                    color: Colors.white70)))),
+                            child: Padding(
+                              padding: const EdgeInsets.only(
+                                  left: 18.0, right: 18.0),
+                              child: Text(text,
+                                  style: TextStyle(
+                                      fontFamily: "Arial Rounded",
+                                      fontWeight: FontWeight.normal,
+                                      color: Colors.white)),
+                            ))),
                     textData != ""
                         ? CupertinoButton(
                             onPressed: () async {
