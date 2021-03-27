@@ -84,6 +84,12 @@ class _QRViewWidgetState extends State<QRViewWidget> with WidgetsBindingObserver
               textData != "" ? CupertinoButton(
                 onPressed: () async {
                     FlutterClipboard.copy(textData);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text("Copied to clipboard."),
+                          duration: Duration(seconds: 1),
+                        )
+                    );
                     setState(() {});
                 },
                 child: Text('Copy'),
