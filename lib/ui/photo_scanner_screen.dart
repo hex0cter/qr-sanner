@@ -1,5 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'dart:io';
 
 class PhotoScannerScreen extends StatefulWidget {
   @override
@@ -7,6 +9,27 @@ class PhotoScannerScreen extends StatefulWidget {
 }
 
 class _PhotoScannerScreenState extends State<PhotoScannerScreen> {
+  File _image;
+  final picker = ImagePicker();
+
+  Future getImage() async {
+    final pickedFile = await picker.getImage(source: ImageSource.gallery);
+
+    setState(() {
+      if (pickedFile != null) {
+        _image = File(pickedFile.path);
+        print(_image);
+      } else {
+        print('No image selected.');
+      }
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -17,6 +40,9 @@ class _PhotoScannerScreenState extends State<PhotoScannerScreen> {
                   onPressed: () => Navigator.of(context).pop(),
                 ),
                 title: Text("Photos")),
-            body: Text("photo")));
+            body: CupertinoButton(
+              child: Text("Select a photo"),
+              onPressed: getImage,
+            )));
   }
 }
