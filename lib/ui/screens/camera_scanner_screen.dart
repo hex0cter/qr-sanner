@@ -49,7 +49,9 @@ class _CameraScannerScreenState extends State<CameraScannerScreen>
   void didPopNext() {
     print("did pop next");
     print(ModalRoute.of(context).isCurrent);
+    print("resume camera");
     controller.resumeCamera();
+    setState(() {});
     // Covering route was popped off the navigator.
   }
 
@@ -63,6 +65,7 @@ class _CameraScannerScreenState extends State<CameraScannerScreen>
         ModalRoute.of(context).isCurrent) {
       print("resume camera");
       controller.resumeCamera();
+      setState(() {});
     }
   }
 
@@ -195,7 +198,7 @@ class _CameraScannerScreenState extends State<CameraScannerScreen>
 
   void _navigateToPhotoScreen() async {
     PermissionStatus permissionStatus = await Permission.photos.request();
-    if(permissionStatus.isGranted || permissionStatus.isLimited) {
+    if (permissionStatus.isGranted || permissionStatus.isLimited) {
       print("access to photo status: ${permissionStatus}");
 
       print("pause camera");
@@ -207,15 +210,21 @@ class _CameraScannerScreenState extends State<CameraScannerScreen>
         context: context,
         builder: (context) => CupertinoAlertDialog(
           title: Text("Access to Photo required"),
-          content: Text("This app needs to access photos to scan a QR code from it"),
+          content:
+              Text("This app needs to access photos to scan a QR code from it"),
           actions: [
-            CupertinoButton(child: Text("Cancel"), onPressed: () => Navigator.of(context).pop()),
-            CupertinoButton(child: Text("Setting"), onPressed: () {openAppSettings();}),
+            CupertinoButton(
+                child: Text("Cancel"),
+                onPressed: () => Navigator.of(context).pop()),
+            CupertinoButton(
+                child: Text("Setting"),
+                onPressed: () {
+                  openAppSettings();
+                }),
           ],
         ),
       );
     }
-
   }
 
   @override
