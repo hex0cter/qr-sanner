@@ -77,33 +77,16 @@ class _CameraScannerScreenState extends State<CameraScannerScreen>
 
   @override
   Widget build(BuildContext context) {
-    Future<bool> _future = controller?.getFlashStatus();
-    _future?.catchError((err) {
-      // do something with err
-      print(err);
-    });
-
     return Scaffold(
       body: Stack(
         children: <Widget>[
           Container(
               child: Stack(
             children: [
-              _buildQrView(context),
+              _QrScannerWidget(context),
               Positioned(
                 child: IconButton(
-                  icon: FutureBuilder(
-                    future: _future,
-                    builder: (context, snapshot) {
-                      print(snapshot?.data);
-                      return Icon(
-                          snapshot?.data == true
-                              ? Icons.flash_on
-                              : Icons.flash_off,
-                          color: Colors.white70,
-                          size: 30);
-                    },
-                  ),
+                  icon: _flashIconWidget(context),
                   tooltip: 'Flash',
                   onPressed: () {
                     setState(() {
@@ -136,7 +119,24 @@ class _CameraScannerScreenState extends State<CameraScannerScreen>
     );
   }
 
-  Widget _buildQrView(BuildContext context) {
+  Widget _flashIconWidget(BuildContext context) {
+    Future<bool> _future = controller?.getFlashStatus();
+    _future?.catchError((err) {
+      // do something with err
+      print(err);
+    });
+
+    return FutureBuilder(
+      future: _future,
+      builder: (context, snapshot) {
+        print(snapshot?.data);
+        return Icon(snapshot?.data == true ? Icons.flash_on : Icons.flash_off,
+            color: Colors.white70, size: 30);
+      },
+    );
+  }
+
+  Widget _QrScannerWidget(BuildContext context) {
     // For this example we check how width or tall the device is and change the scanArea and overlay accordingly.
     var scanArea = (MediaQuery.of(context).size.width < 400 ||
             MediaQuery.of(context).size.height < 400)
