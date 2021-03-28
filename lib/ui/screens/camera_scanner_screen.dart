@@ -1,13 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
-import 'package:qr_scanner/ui/widgets/information_widget.dart';
 import 'dart:io';
 import 'dart:async';
 import 'package:qr_scanner/ui/widgets/scan_result_widget.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:qr_scanner/ui/widgets/update_privacy_widget.dart';
-
 
 final RouteObserver<PageRoute> routeObserver = RouteObserver<PageRoute>();
 
@@ -106,11 +104,7 @@ class _CameraScannerScreenState extends State<CameraScannerScreen>
                   icon:
                       Icon(Icons.insert_photo, color: Colors.white70, size: 34),
                   tooltip: 'Album',
-                  onPressed: () {
-                    print("pause camera");
-                    controller.pauseCamera();
-                    Navigator.pushNamed(context, "/photo");
-                  },
+                  onPressed: _navigateToPhotoScreen,
                 ),
                 top: 60.0,
                 right: 10.0,
@@ -154,7 +148,8 @@ class _CameraScannerScreenState extends State<CameraScannerScreen>
         if (snapshot?.data == true) {
           return ScanResultWidget(data: data);
         } else {
-          return UpdatePrivacyWidget(data:  "You have not granted camera permissions to this app.");
+          return UpdatePrivacyWidget(
+              data: "You have not granted camera permissions to this app.");
         }
       },
     );
@@ -196,6 +191,31 @@ class _CameraScannerScreenState extends State<CameraScannerScreen>
         });
       });
     });
+  }
+
+  void _navigateToPhotoScreen() async {
+    PermissionStatus permissionStatus = await Permission.photos.request();
+    if(permissionStatus.isGranted || permissionStatus.isLimited) {
+      print("access to photo status: ${permissionStatus}");
+
+      print("pause camera");
+      controller.pauseCamera();
+      Navigator.pushNamed(context, "/photo");
+    } else {
+      print("oh shit");
+      showCupertinoDialog(
+        context: context,
+        builder: (context) => CupertinoAlertDialog(
+          title: Text("Access to Photo required"),
+          content: Text("This app needs to access photos to scan a QR code from it"),
+          actions: [
+            CupertinoButton(child: Text("Cancel"), onPressed: () => Navigator.of(context).pop()),
+            CupertinoButton(child: Text("Setting"), onPressed: () {openAppSettings();}),
+          ],
+        ),
+      );
+    }
+
   }
 
   @override
