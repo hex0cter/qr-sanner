@@ -1,9 +1,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
+import 'package:qr_scanner/ui/widgets/information_widget.dart';
 import 'dart:io';
 import 'dart:async';
-import 'package:qr_scanner/ui/widgets/scan_result.dart';
+import 'package:qr_scanner/ui/widgets/scan_result_widget.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:qr_scanner/ui/widgets/update_privacy_widget.dart';
+
 
 final RouteObserver<PageRoute> routeObserver = RouteObserver<PageRoute>();
 
@@ -83,7 +87,7 @@ class _CameraScannerScreenState extends State<CameraScannerScreen>
           Container(
               child: Stack(
             children: [
-              _QrScannerWidget(context),
+              _qrScannerWidget(context),
               Positioned(
                 child: IconButton(
                   icon: _flashIconWidget(context),
@@ -113,7 +117,7 @@ class _CameraScannerScreenState extends State<CameraScannerScreen>
               )
             ],
           )),
-          ScanResultWidget(data: data)
+          _informationPanel()
         ],
       ),
     );
@@ -136,7 +140,27 @@ class _CameraScannerScreenState extends State<CameraScannerScreen>
     );
   }
 
-  Widget _QrScannerWidget(BuildContext context) {
+  Widget _informationPanel() {
+    Future<bool> _future = Permission.camera.request().isGranted;
+    _future?.catchError((err) {
+      // do something with err
+      print(err);
+    });
+
+    return FutureBuilder(
+      future: _future,
+      builder: (context, snapshot) {
+        print(snapshot?.data);
+        if (snapshot?.data == true) {
+          return ScanResultWidget(data: data);
+        } else {
+          return UpdatePrivacyWidget(data:  "You have not granted camera permissions to this app.");
+        }
+      },
+    );
+  }
+
+  Widget _qrScannerWidget(BuildContext context) {
     // For this example we check how width or tall the device is and change the scanArea and overlay accordingly.
     var scanArea = (MediaQuery.of(context).size.width < 400 ||
             MediaQuery.of(context).size.height < 400)

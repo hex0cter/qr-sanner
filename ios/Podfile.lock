@@ -3,6 +3,8 @@ PODS:
   - image_picker (0.0.1):
     - Flutter
   - MTBBarcodeScanner (5.0.11)
+  - "permission_handler (5.1.0+2)":
+    - Flutter
   - qr_code_scanner (0.2.0):
     - Flutter
     - MTBBarcodeScanner
@@ -12,6 +14,7 @@ PODS:
 DEPENDENCIES:
   - Flutter (from `Flutter`)
   - image_picker (from `.symlinks/plugins/image_picker/ios`)
+  - permission_handler (from `.symlinks/plugins/permission_handler/ios`)
   - qr_code_scanner (from `.symlinks/plugins/qr_code_scanner/ios`)
   - qr_code_tools (from `.symlinks/plugins/qr_code_tools/ios`)
 
@@ -24,6 +27,8 @@ EXTERNAL SOURCES:
     :path: Flutter
   image_picker:
     :path: ".symlinks/plugins/image_picker/ios"
+  permission_handler:
+    :path: ".symlinks/plugins/permission_handler/ios"
   qr_code_scanner:
     :path: ".symlinks/plugins/qr_code_scanner/ios"
   qr_code_tools:
@@ -33,6 +38,7 @@ SPEC CHECKSUMS:
   Flutter: 434fef37c0980e73bb6479ef766c45957d4b510c
   image_picker: 50e7c7ff960e5f58faa4d1f4af84a771c671bc4a
   MTBBarcodeScanner: f453b33c4b7dfe545d8c6484ed744d55671788cb
+  permission_handler: ccb20a9fad0ee9b1314a52b70b76b473c5f8dab0
   qr_code_scanner: bb67d64904c3b9658ada8c402e8b4d406d5d796e
   qr_code_tools: 5b5dd44ccdfa4b81f645c251e421f61003254b81
 
