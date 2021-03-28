@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'package:qr_code_tools/qr_code_tools.dart';
-import 'package:qr_scanner/ui/widgets/scan_result.dart';
+import 'package:qr_scanner/ui/widgets/scan_result_widget.dart';
 
 class PhotoScannerScreen extends StatefulWidget {
   @override

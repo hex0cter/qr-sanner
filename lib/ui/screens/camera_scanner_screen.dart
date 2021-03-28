@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'dart:io';
 import 'dart:async';
-import 'package:qr_scanner/ui/widgets/scan_result.dart';
+import 'package:qr_scanner/ui/widgets/scan_result_widget.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:qr_scanner/ui/widgets/update_privacy_widget.dart';
 
 final RouteObserver<PageRoute> routeObserver = RouteObserver<PageRoute>();
 
@@ -47,7 +49,9 @@ class _CameraScannerScreenState extends State<CameraScannerScreen>
   void didPopNext() {
     print("did pop next");
     print(ModalRoute.of(context).isCurrent);
+    print("resume camera");
     controller.resumeCamera();
+    setState(() {});
     // Covering route was popped off the navigator.
   }
 
@@ -61,6 +65,7 @@ class _CameraScannerScreenState extends State<CameraScannerScreen>
         ModalRoute.of(context).isCurrent) {
       print("resume camera");
       controller.resumeCamera();
+      setState(() {});
     }
   }
 
@@ -77,33 +82,16 @@ class _CameraScannerScreenState extends State<CameraScannerScreen>
 
   @override
   Widget build(BuildContext context) {
-    Future<bool> _future = controller?.getFlashStatus();
-    _future?.catchError((err) {
-      // do something with err
-      print(err);
-    });
-
     return Scaffold(
       body: Stack(
         children: <Widget>[
           Container(
               child: Stack(
             children: [
-              _buildQrView(context),
+              _qrScannerWidget(context),
               Positioned(
                 child: IconButton(
-                  icon: FutureBuilder(
-                    future: _future,
-                    builder: (context, snapshot) {
-                      print(snapshot?.data);
-                      return Icon(
-                          snapshot?.data == true
-                              ? Icons.flash_on
-                              : Icons.flash_off,
-                          color: Colors.white70,
-                          size: 30);
-                    },
-                  ),
+                  icon: _flashIconWidget(context),
                   tooltip: 'Flash',
                   onPressed: () {
                     setState(() {
@@ -119,24 +107,58 @@ class _CameraScannerScreenState extends State<CameraScannerScreen>
                   icon:
                       Icon(Icons.insert_photo, color: Colors.white70, size: 34),
                   tooltip: 'Album',
-                  onPressed: () {
-                    print("pause camera");
-                    controller.pauseCamera();
-                    Navigator.pushNamed(context, "/photo");
-                  },
+                  onPressed: _navigateToPhotoScreen,
                 ),
                 top: 60.0,
                 right: 10.0,
               )
             ],
           )),
-          ScanResultWidget(data: data)
+          _informationPanel()
         ],
       ),
     );
   }
 
-  Widget _buildQrView(BuildContext context) {
+  Widget _flashIconWidget(BuildContext context) {
+    Future<bool> _future = controller?.getFlashStatus();
+    _future?.catchError((err) {
+      // do something with err
+      print(err);
+    });
+
+    return FutureBuilder(
+      future: _future,
+      builder: (context, snapshot) {
+        print(snapshot?.data);
+        return Icon(snapshot?.data == true ? Icons.flash_on : Icons.flash_off,
+            color: Colors.white70, size: 30);
+      },
+    );
+  }
+
+  Widget _informationPanel() {
+    Future<bool> _future = Permission.camera.request().isGranted;
+    _future?.catchError((err) {
+      // do something with err
+      print(err);
+    });
+
+    return FutureBuilder(
+      future: _future,
+      builder: (context, snapshot) {
+        print(snapshot?.data);
+        if (snapshot?.data == true) {
+          return ScanResultWidget(data: data);
+        } else {
+          return UpdatePrivacyWidget(
+              data: "You have not granted camera permissions to this app.");
+        }
+      },
+    );
+  }
+
+  Widget _qrScannerWidget(BuildContext context) {
     // For this example we check how width or tall the device is and change the scanArea and overlay accordingly.
     var scanArea = (MediaQuery.of(context).size.width < 400 ||
             MediaQuery.of(context).size.height < 400)
@@ -172,6 +194,37 @@ class _CameraScannerScreenState extends State<CameraScannerScreen>
         });
       });
     });
+  }
+
+  void _navigateToPhotoScreen() async {
+    PermissionStatus permissionStatus = await Permission.photos.request();
+    if (permissionStatus.isGranted || permissionStatus.isLimited) {
+      print("access to photo status: ${permissionStatus}");
+
+      print("pause camera");
+      controller.pauseCamera();
+      Navigator.pushNamed(context, "/photo");
+    } else {
+      print("oh shit");
+      showCupertinoDialog(
+        context: context,
+        builder: (context) => CupertinoAlertDialog(
+          title: Text("Access to Photo required"),
+          content:
+              Text("This app needs to access photos to scan a QR code from it"),
+          actions: [
+            CupertinoButton(
+                child: Text("Cancel"),
+                onPressed: () => Navigator.of(context).pop()),
+            CupertinoButton(
+                child: Text("Setting"),
+                onPressed: () {
+                  openAppSettings();
+                }),
+          ],
+        ),
+      );
+    }
   }
 
   @override
