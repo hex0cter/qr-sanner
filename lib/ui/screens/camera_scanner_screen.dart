@@ -124,13 +124,12 @@ class _CameraScannerScreenState extends State<CameraScannerScreen>
     Future<bool> _future = controller?.getFlashStatus();
     _future?.catchError((err) {
       // do something with err
-      print(err);
+      print('_flashIconWidget: $err');
     });
 
     return FutureBuilder(
       future: _future,
       builder: (context, snapshot) {
-        print(snapshot?.data);
         return Icon(snapshot?.data == true ? Icons.flash_on : Icons.flash_off,
             color: Colors.white70, size: 30);
       },
@@ -141,13 +140,12 @@ class _CameraScannerScreenState extends State<CameraScannerScreen>
     Future<bool> _future = Permission.camera.request().isGranted;
     _future?.catchError((err) {
       // do something with err
-      print(err);
+      print('_informationPanel: $err');
     });
 
     return FutureBuilder(
       future: _future,
       builder: (context, snapshot) {
-        print(snapshot?.data);
         if (snapshot?.data == true) {
           return ScanResultWidget(data: data);
         } else {
@@ -188,7 +186,7 @@ class _CameraScannerScreenState extends State<CameraScannerScreen>
       });
 
       timer?.cancel();
-      timer = new Timer(new Duration(seconds: 5), () {
+      timer = new Timer(new Duration(seconds: 1), () {
         setState(() {
           data = "";
         });
@@ -199,10 +197,10 @@ class _CameraScannerScreenState extends State<CameraScannerScreen>
   void _navigateToPhotoScreen() async {
     PermissionStatus permissionStatus = await Permission.photos.request();
     if (permissionStatus.isGranted || permissionStatus.isLimited) {
-      print("access to photo status: ${permissionStatus}");
+      print("access to photo status: $permissionStatus");
 
       print("pause camera");
-      controller.pauseCamera();
+      await controller.pauseCamera();
       Navigator.pushNamed(context, "/photo");
     } else {
       showCupertinoDialog(
