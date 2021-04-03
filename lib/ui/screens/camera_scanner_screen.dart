@@ -56,15 +56,15 @@ class _CameraScannerScreenState extends State<CameraScannerScreen>
   }
 
   @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
+  void didChangeAppLifecycleState(AppLifecycleState state) async {
     print('state = $state');
     if (state == AppLifecycleState.paused) {
-      controller.pauseCamera();
+      await controller.pauseCamera();
     }
     if (state == AppLifecycleState.resumed &&
         ModalRoute.of(context).isCurrent) {
       print("resume camera");
-      controller.resumeCamera();
+      await controller.resumeCamera();
       setState(() {});
     }
   }
@@ -176,17 +176,19 @@ class _CameraScannerScreenState extends State<CameraScannerScreen>
     );
   }
 
-  void _onQRViewCreated(QRViewController controller) {
+  void _onQRViewCreated(QRViewController _controller) {
     setState(() {
-      this.controller = controller;
+      controller = _controller;
     });
-    controller.scannedDataStream.listen((scanData) {
+    _controller.scannedDataStream.listen((scanData) {
+      print('discovered data ${scanData?.code}');
       setState(() {
         data = scanData?.code != null ? scanData.code : "";
       });
 
       timer?.cancel();
       timer = new Timer(new Duration(seconds: 1), () {
+        print('Reset data');
         setState(() {
           data = "";
         });
