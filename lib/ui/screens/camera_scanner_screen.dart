@@ -205,7 +205,6 @@ class _CameraScannerScreenState extends State<CameraScannerScreen>
       controller.pauseCamera();
       Navigator.pushNamed(context, "/photo");
     } else {
-      print("oh shit");
       showCupertinoDialog(
         context: context,
         builder: (context) => CupertinoAlertDialog(

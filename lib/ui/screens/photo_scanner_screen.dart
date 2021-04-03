@@ -34,8 +34,9 @@ class _PhotoScannerScreenState extends State<PhotoScannerScreen> {
   }
 
   @override
-  void initState() {
-    super.initState();
+  void didChangeDependencies() async {
+    await getImage();
+    super.didChangeDependencies();
   }
 
   @override
